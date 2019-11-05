@@ -11,14 +11,13 @@ renderSchedule();
 
 function renderSchedule() {
     let storedSchedule = JSON.parse(localStorage.getItem("today"));
-    console.log(localStorage.getItem("today"));
+    // console.log(localStorage.getItem("today"));
     if (storedSchedule) {
         daySchedule = storedSchedule;
         renderHourSchedule();
     }
     else {
         for (let i = 5; i < 18; i++) {
-            let strI = i.toString();
             daySchedule[i] = "";
         }
         renderHourSchedule();
@@ -26,8 +25,8 @@ function renderSchedule() {
 }
 
 $(".container").on("click", "button", function () {
-    let inputID = $($(this).parents()[1]).attr('id');
-    console.log($(`#${inputID} textarea`)[0]);
+    let inputID = $(this).parents().eq(1).attr('id'); 
+    // console.log($(`#${inputID} textarea`)[0]);
     if ($(`#${inputID} textarea`)[0].value) {
         daySchedule[inputID] = $(`#${inputID} textarea`)[0].value;
         localStorage.setItem("today", JSON.stringify(daySchedule));
@@ -37,33 +36,34 @@ $(".container").on("click", "button", function () {
 
 function renderHourSchedule() {
     for (let [key, value] of Object.entries(daySchedule)) {
-        $($(`#${key} textarea`)[0]).val(value);
+        $(`#${key} textarea`).eq(0).val(value);
     }
 }
 
 
 function currentDate() {
+    
     return moment().format('dddd, MMMM Do, YYYY');
 }
 
 function getCurrentHour() {
-    return parseInt(moment().format('HH'));
+    return parseInt(moment().hour());
 }
 
 
 function renderDayPlanner() {
     for (var i = 9; i < 12; i++) {
-        rednerInputGroup(i, "a.m", i);
+        renderInputGroup(i, "a.m", i);
     }
-    rednerInputGroup(12, "p.m", 12);
+    renderInputGroup(12, "p.m", 12);
 
     for (var i = 1; i < 6; i++) {
-        rednerInputGroup(i, "p.m", 12 + i);
+        renderInputGroup(i, "p.m", 12 + i);
     }
 
 }
 
-function rednerInputGroup(hour, amPM, militaryHour) {
+function renderInputGroup(hour, amPM, militaryHour) {
     var inputPrepend = $("<div>").addClass("input-group-prepend hour-entry").append($("<span>").addClass("hour col-sm-12").text(hour + " " + amPM));
     var inputField = $("<textarea>").addClass("form-control").attr("aria-label", "Task details").attr("field-id", `${hour}${amPM}`);
     if (getCurrentHour() === militaryHour) {
