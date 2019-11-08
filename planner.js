@@ -5,12 +5,12 @@
 // add calendar selector
 let daySchedule = {};
 
-$("#currentDay").html(currentDate());
+$("#currentDay").text(currentDate());
 renderDayPlanner();
 renderSchedule();
 
 function renderSchedule() {
-    let storedSchedule = JSON.parse(localStorage.getItem("today"));
+    const storedSchedule = JSON.parse(localStorage.getItem("today"));
     // console.log(localStorage.getItem("today"));
     if (storedSchedule) {
         daySchedule = storedSchedule;
@@ -25,10 +25,11 @@ function renderSchedule() {
 }
 
 $(".container").on("click", "button", function () {
-    let inputID = $(this).parents().eq(1).attr('id'); 
+    const inputID = $(this).parents().eq(1).attr('id'); 
     // console.log($(`#${inputID} textarea`)[0]);
-    if ($(`#${inputID} textarea`)[0].value) {
-        daySchedule[inputID] = $(`#${inputID} textarea`)[0].value;
+    const textValue = $(`#${inputID} textarea`).eq(0).val();
+    if (textValue) {
+        daySchedule[inputID] = textValue;
         localStorage.setItem("today", JSON.stringify(daySchedule));
     }
 
@@ -47,24 +48,25 @@ function currentDate() {
 }
 
 function getCurrentHour() {
-    return parseInt(moment().hour());
+    return moment().hour();
 }
 
 
 function renderDayPlanner() {
-    for (var i = 9; i < 12; i++) {
+    for (let i = 9; i < 12; i++) {
         renderInputGroup(i, "a.m", i);
     }
     renderInputGroup(12, "p.m", 12);
 
-    for (var i = 1; i < 6; i++) {
+    for (let i = 1; i < 6; i++) {
         renderInputGroup(i, "p.m", 12 + i);
     }
 
 }
 
 function renderInputGroup(hour, amPM, militaryHour) {
-    var inputPrepend = $("<div>").addClass("input-group-prepend hour-entry").append($("<span>").addClass("hour col-sm-12").text(hour + " " + amPM));
+    const inputPrepend = $("<div>").addClass("input-group-prepend hour-entry").append($("<span>").addClass("hour col-sm-12").text(hour + " " + amPM));
+    //const inputPrepend = $(`<span Class="hour col-sm-12"> ${hour} ${amPM} </span>`).appendTo('<div class="input-group-prepend hour-entry"></div>');
     var inputField = $("<textarea>").addClass("form-control").attr("aria-label", "Task details").attr("field-id", `${hour}${amPM}`);
     if (getCurrentHour() === militaryHour) {
         inputField.addClass("present");
@@ -75,7 +77,9 @@ function renderInputGroup(hour, amPM, militaryHour) {
     else {
         inputField.addClass("past");
     }
-    var inputAppend = $("<div>").addClass("input-group-apppend hour-entry").append($("<button>").addClass("btn btn-outline-secondary col-sm-12 saveBtn").html('<i class="far col-sm-12 fa-save"></i>'));
-    var newInputGroup = $("<div>").addClass("input-group").attr("id", `${militaryHour}`).append(inputPrepend, inputField, inputAppend);
+    //const inputAppend = $("<div>").addClass("input-group-apppend hour-entry").append($("<button>").addClass("btn btn-outline-secondary col-sm-12 saveBtn").html('<i class="far col-sm-12 fa-save"></i>'));
+    const inputAppend = $('<div class="input-group-apppend hour-entry"><button class = "btn btn-outline-secondary col-sm-12 saveBtn"><i class="far col-sm-12 fa-save"></i></button></div>').appendTo('<div class="input-group-apppend hour-entry"></div>');
+
+    const newInputGroup = $("<div>").addClass("input-group").attr("id", `${militaryHour}`).append(inputPrepend, inputField, inputAppend);
     $(".container").append(newInputGroup);
 }
